@@ -1,0 +1,24 @@
+{
+    "family": "coal-chatbot-task",
+    "networkMode": "awsvpc",
+    "requiresCompatibilities": ["FARGATE"],
+    "cpu": "256",
+    "memory": "512",
+    "executionRoleArn": "arn:aws:iam::<ACCOUNT_ID>:role/ecsTaskExecutionRole",
+    "containerDefinitions": [
+      {
+        "name": "coal-chatbot-container",
+        "image": "<ACCOUNT_ID>.dkr.ecr.ap-south-1.amazonaws.com/coal-chatbot:latest",
+        "essential": true,
+        "portMappings": [
+          {
+            "containerPort": 5000,
+            "hostPort": 5000,
+            "protocol": "tcp"
+          }
+        ],
+        "memory": 512,
+        "cpu": 256
+      }
+    ]
+  }
