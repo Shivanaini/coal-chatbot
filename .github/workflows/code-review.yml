@@ -31,9 +31,6 @@ jobs:
         run: |
           pip install -r backend/requirements.txt
 
-      - name: Install Code Review Tools
-        run: |
-          pip install flake8 pylint pytest
 
       - name: Run Code Review Agent
         run: |
