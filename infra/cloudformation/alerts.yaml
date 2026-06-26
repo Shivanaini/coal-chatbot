@@ -1,4 +1,8 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: Alerts stack
 
-Resources: {}
+Resources:
+  ChatbotSNSTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: coal-chatbot-alerts

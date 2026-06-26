@@ -26,7 +26,8 @@ Resources:
       NetworkMode: awsvpc
       RequiresCompatibilities:
         - FARGATE
-      ExecutionRoleArn: arn:aws:iam::123456789012:role/ecsTaskExecutionRole
+      ExecutionRoleArn:
+          Fn::ImportValue: coal-chatbot-execution-role
       ContainerDefinitions:
         - Name: coal-chatbot
           Image: coal-chatbot:latest

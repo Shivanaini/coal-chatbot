@@ -6,6 +6,7 @@ FILES = [
     "infra/cloudformation/ecr.yaml",
     "infra/cloudformation/alb.yaml",
     "infra/cloudformation/ecs.yaml",
+    "infra/cloudformation/iam.yaml",
     "infra/cloudformation/autoscaling.yaml",
     "infra/cloudformation/monitoring.yaml",
     "infra/cloudformation/alerts.yaml"
@@ -21,11 +22,11 @@ for file in FILES:
 
 print("Infra Review Agent")
 print("==================")
-print(f"Score: {score}/10")
+print(f"Infrastructure Score: {score}/10")
 
 if issues:
-    print("\nMissing Files:")
+    print("\nMissing files:")
     for issue in issues:
         print("-", issue)
 else:
-    print("All infra files present. No issues found.")
+    print("Infra structure looks good.")
