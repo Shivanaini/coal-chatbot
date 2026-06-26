@@ -1,0 +1,23 @@
+name: Infra Pipeline
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - 'infra/**'
+
+jobs:
+  infra-validation:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Run Infra Agent
+        run: python agents/infra_review_agent.py
