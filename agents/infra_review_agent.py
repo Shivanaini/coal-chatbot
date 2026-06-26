@@ -1,11 +1,14 @@
 import os
 
 FILES = [
-    "infra/cloudformation/network.yaml"
+    "infra/cloudformation/network.yaml",
     "infra/cloudformation/security.yaml",
     "infra/cloudformation/ecr.yaml",
-    "infra/cloudformation/alb.yaml"
-
+    "infra/cloudformation/alb.yaml",
+    "infra/cloudformation/ecs.yaml",
+    "infra/cloudformation/autoscaling.yaml",
+    "infra/cloudformation/monitoring.yaml",
+    "infra/cloudformation/alerts.yaml"
 ]
 
 score = 10
@@ -13,16 +16,16 @@ issues = []
 
 for file in FILES:
     if not os.path.exists(file):
-        score -= 2
-        issues.append(f"Missing file: {file}")
+        score -= 1
+        issues.append(file)
 
 print("Infra Review Agent")
 print("==================")
-print(f"Infrastructure Score: {score}/10")
+print(f"Score: {score}/10")
 
 if issues:
-    print("\nIssues:")
+    print("\nMissing Files:")
     for issue in issues:
         print("-", issue)
 else:
-    print("No infra issues found.")
+    print("All infra files present. No issues found.")
