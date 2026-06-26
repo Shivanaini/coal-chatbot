@@ -1,24 +1,16 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Network stack for coal-chatbot
+Description: VPC with public and private subnets
 
 Resources:
-
   ChatbotVPC:
     Type: AWS::EC2::VPC
     Properties:
       CidrBlock: 10.0.0.0/16
       EnableDnsSupport: true
       EnableDnsHostnames: true
-      Tags:
-        - Key: Name
-          Value: coal-chatbot-vpc
 
   InternetGateway:
     Type: AWS::EC2::InternetGateway
-    Properties:
-      Tags:
-        - Key: Name
-          Value: coal-chatbot-igw
 
   AttachGateway:
     Type: AWS::EC2::VPCGatewayAttachment
@@ -33,9 +25,6 @@ Resources:
       CidrBlock: 10.0.1.0/24
       AvailabilityZone: ap-south-1a
       MapPublicIpOnLaunch: true
-      Tags:
-        - Key: Name
-          Value: public-subnet-1
 
   PublicSubnet2:
     Type: AWS::EC2::Subnet
@@ -44,16 +33,37 @@ Resources:
       CidrBlock: 10.0.2.0/24
       AvailabilityZone: ap-south-1b
       MapPublicIpOnLaunch: true
-      Tags:
-        - Key: Name
-          Value: public-subnet-2
+
+  PrivateSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref ChatbotVPC
+      CidrBlock: 10.0.3.0/24
+      AvailabilityZone: ap-south-1a
+
+  PrivateSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref ChatbotVPC
+      CidrBlock: 10.0.4.0/24
+      AvailabilityZone: ap-south-1b
+
+  ElasticIP:
+    Type: AWS::EC2::EIP
+    DependsOn: AttachGateway
+
+  NatGateway:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt ElasticIP.AllocationId
+      SubnetId: !Ref PublicSubnet1
 
   PublicRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
       VpcId: !Ref ChatbotVPC
 
-  DefaultRoute:
+  PublicRoute:
     Type: AWS::EC2::Route
     DependsOn: AttachGateway
     Properties:
@@ -61,24 +71,26 @@ Resources:
       DestinationCidrBlock: 0.0.0.0/0
       GatewayId: !Ref InternetGateway
 
-  RouteAssoc1:
-    Type: AWS::EC2::SubnetRouteTableAssociation
+  PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
     Properties:
-      SubnetId: !Ref PublicSubnet1
-      RouteTableId: !Ref PublicRouteTable
+      VpcId: !Ref ChatbotVPC
 
-  RouteAssoc2:
-    Type: AWS::EC2::SubnetRouteTableAssociation
+  PrivateRoute:
+    Type: AWS::EC2::Route
     Properties:
-      SubnetId: !Ref PublicSubnet2
-      RouteTableId: !Ref PublicRouteTable
+      RouteTableId: !Ref PrivateRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NatGateway
 
 Outputs:
   VpcId:
     Value: !Ref ChatbotVPC
-
-  Subnet1:
+  PublicSubnet1:
     Value: !Ref PublicSubnet1
-
-  Subnet2:
+  PublicSubnet2:
     Value: !Ref PublicSubnet2
+  PrivateSubnet1:
+    Value: !Ref PrivateSubnet1
+  PrivateSubnet2:
+    Value: !Ref PrivateSubnet2
