@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: ECS stack for coal-chatbot
+Description: ECS stack
 
 Parameters:
   PrivateSubnet1:
@@ -26,18 +26,16 @@ Resources:
       NetworkMode: awsvpc
       RequiresCompatibilities:
         - FARGATE
-      ExecutionRoleArn:
-          Fn::ImportValue: coal-chatbot-execution-role
+      ExecutionRoleArn: arn:aws:iam::084658101526:role/coal-chatbot-ecs-execution-role
       ContainerDefinitions:
-        - Name: coal-chatbot
-          Image: coal-chatbot:latest
+        - Name: coal-chatbot-container
+          Image: 084658101526.dkr.ecr.ap-south-1.amazonaws.com/coal-chatbot:latest
           Essential: true
           PortMappings:
             - ContainerPort: 5000
 
   ECSService:
     Type: AWS::ECS::Service
-    DependsOn: ECSCluster
     Properties:
       Cluster: !Ref ECSCluster
       DesiredCount: 1
@@ -52,6 +50,6 @@ Resources:
             - !Ref PrivateSubnet1
             - !Ref PrivateSubnet2
       LoadBalancers:
-        - ContainerName: coal-chatbot
+        - ContainerName: coal-chatbot-container
           ContainerPort: 5000
           TargetGroupArn: !Ref TargetGroupArn

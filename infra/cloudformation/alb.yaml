@@ -1,16 +1,13 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: ALB for coal-chatbot
+Description: ALB stack
 
 Parameters:
   VpcId:
     Type: String
-
   PublicSubnet1:
     Type: String
-
   PublicSubnet2:
     Type: String
-
   ALBSecurityGroup:
     Type: String
 
@@ -27,18 +24,16 @@ Resources:
         - !Ref PublicSubnet1
         - !Ref PublicSubnet2
 
-  ChatbotTargetGroup:
+  TargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
-      Name: chatbot-target-group
       Port: 5000
       Protocol: HTTP
       VpcId: !Ref VpcId
       TargetType: ip
-      HealthCheckPath: /
-      HealthCheckProtocol: HTTP
+      HealthCheckPath: /health
 
-  ALBListener:
+  Listener:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
       LoadBalancerArn: !Ref ChatbotALB
@@ -46,11 +41,8 @@ Resources:
       Protocol: HTTP
       DefaultActions:
         - Type: forward
-          TargetGroupArn: !Ref ChatbotTargetGroup
+          TargetGroupArn: !Ref TargetGroup
 
 Outputs:
   TargetGroupArn:
-    Value: !Ref ChatbotTargetGroup
-
-  LoadBalancerDNS:
-    Value: !GetAtt ChatbotALB.DNSName
+    Value: !Ref TargetGroup

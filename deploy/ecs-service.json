@@ -1,19 +1,19 @@
 {
-    "serviceName": "coal-chatbot-service",
-    "cluster": "coal-chatbot-cluster",
-    "taskDefinition": "coal-chatbot-task",
-    "desiredCount": 1,
-    "launchType": "FARGATE",
-    "networkConfiguration": {
-      "awsvpcConfiguration": {
-        "subnets": [
-          "subnet-xxxxxxxx",
-          "subnet-yyyyyyyy"
-        ],
-        "securityGroups": [
-          "sg-xxxxxxxx"
-        ],
-        "assignPublicIp": "ENABLED"
-      }
+  "serviceName": "coal-chatbot-service",
+  "cluster": "coal-chatbot-cluster",
+  "taskDefinition": "coal-chatbot-task",
+  "desiredCount": 1,
+  "launchType": "FARGATE",
+  "networkConfiguration": {
+    "awsvpcConfiguration": {
+      "subnets": [
+        "private-subnet-1",
+        "private-subnet-2"
+      ],
+      "securityGroups": [
+        "ecs-security-group"
+      ],
+      "assignPublicIp": "DISABLED"
     }
   }
+}
