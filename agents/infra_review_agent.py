@@ -2,6 +2,10 @@ import os
 
 FILES = [
     "infra/cloudformation/network.yaml"
+    "infra/cloudformation/security.yaml",
+    "infra/cloudformation/ecr.yaml",
+    "infra/cloudformation/alb.yaml"
+
 ]
 
 score = 10

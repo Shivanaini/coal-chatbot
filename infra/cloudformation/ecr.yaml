@@ -1,0 +1,12 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: ECR repository for chatbot
+
+Resources:
+  ChatbotRepository:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: coal-chatbot
+
+Outputs:
+  RepositoryURI:
+    Value: !GetAtt ChatbotRepository.RepositoryUri
