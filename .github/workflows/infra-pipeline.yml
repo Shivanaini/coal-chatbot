@@ -5,9 +5,10 @@ on:
     branches: [ master ]
     paths:
       - 'infra/**'
+      - '.github/workflows/infra-pipeline.yml'
 
 jobs:
-  infra-validation:
+  infra-validation-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -21,3 +22,34 @@ jobs:
 
       - name: Run Infra Agent
         run: python agents/infra_review_agent.py
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Validate CloudFormation Templates
+        run: |
+          aws cloudformation validate-template --template-body file://infra/cloudformation/network.yaml
+          aws cloudformation validate-template --template-body file://infra/cloudformation/security.yaml
+          aws cloudformation validate-template --template-body file://infra/cloudformation/iam.yaml
+          aws cloudformation validate-template --template-body file://infra/cloudformation/ecr.yaml
+          aws cloudformation validate-template --template-body file://infra/cloudformation/alb.yaml
+          aws cloudformation validate-template --template-body file://infra/cloudformation/ecs.yaml
+
+      - name: Deploy Network Stack
+        run: |
+          aws cloudformation deploy \
+            --template-file infra/cloudformation/network.yaml \
+            --stack-name coal-chatbot-network \
+            --region ap-south-1
+
+      - name: Deploy IAM Stack
+        run: |
+          aws cloudformation deploy \
+            --template-file infra/cloudformation/iam.yaml \
+            --stack-name coal-chatbot-iam \
+            --capabilities CAPABILITY_NAMED_IAM \
+            --region ap-south-1
